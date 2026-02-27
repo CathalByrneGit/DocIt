@@ -4,6 +4,8 @@
 # Usage:
 #   ./docit.sh explore <path>    Print a session prompt for exploring a codebase
 #   ./docit.sh status            Show what's been explored so far
+#   ./docit.sh sync [remote]     Merge changes from remote (default: origin)
+#   ./docit.sh backup [dir]      Back up docs to a private git repo
 #   ./docit.sh help              Show this message
 #
 # DocIt works through conversation. This script helps you start and manage sessions.
@@ -20,13 +22,17 @@ usage() {
 DocIt — Codebase Explorer
 
 Usage:
-  ./docit.sh explore <path>   Start an exploration session for a codebase
-  ./docit.sh status           Show all explored codebases
-  ./docit.sh help             Show this message
+  ./docit.sh explore <path>      Start an exploration session for a codebase
+  ./docit.sh status              Show all explored codebases
+  ./docit.sh sync [remote]       Merge from remote DocIt (default: origin)
+  ./docit.sh backup [dir]        Back up docs/ to a private git repo
+  ./docit.sh help                Show this message
 
 Examples:
   ./docit.sh explore ~/projects/myapp
   ./docit.sh status
+  ./docit.sh sync
+  ./docit.sh backup ~/docit-private
 EOF
 }
 
@@ -129,11 +135,27 @@ cmd_status() {
   done
 }
 
+cmd_sync() {
+  local remote="${1:-}"
+  if [[ -n "$remote" ]]; then
+    "$DOCIT_ROOT/merge.sh" "$remote"
+  else
+    "$DOCIT_ROOT/merge.sh"
+  fi
+}
+
+cmd_backup() {
+  local backup_dir="${1:-${DOCIT_BACKUP_DIR:-}}"
+  "$DOCIT_ROOT/backup.sh" "$backup_dir"
+}
+
 # ─── Entry point ──────────────────────────────────────────────────────────────
 
 case "${1:-help}" in
   explore)        cmd_explore "${2:-}" ;;
   status)         cmd_status ;;
+  sync)           cmd_sync "${2:-}" ;;
+  backup)         cmd_backup "${2:-}" ;;
   help|--help|-h) usage ;;
   *)
     echo "Unknown command: $1" >&2

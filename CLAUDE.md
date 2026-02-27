@@ -168,3 +168,63 @@ After meaningful work, update these sections of `DOCIT.md`:
 - **Exploration Log** — add a dated row describing what was done
 - **Open Questions** — add or resolve questions
 - **Next Steps** — refresh based on what's left
+
+---
+
+## If This Is a Core DocIt
+
+A **core DocIt** is a shared instance that aggregates knowledge from multiple individual DocIts (one per team member). It has three extra files: `MESSAGES.md`, `INSIGHTS.md`, and `CONTRIBUTORS.md`.
+
+If those files are present, do the following **at the start of every session**:
+
+### 1. Read MESSAGES.md
+
+Scan all messages with `<!-- status: pending -->`. For each one, decide:
+
+- **Incorporate**: the finding belongs in a project's docs — add it, then mark `<!-- actioned: YYYY-MM-DD -->`
+- **Route**: the message is addressed to a specific contributor — leave it, add a note
+- **Acknowledge**: it's informational only — mark `<!-- actioned: YYYY-MM-DD -->`
+
+Do not delete messages. The inbox is append-only.
+
+### 2. Read INSIGHTS.md
+
+Before exploring any code, read `INSIGHTS.md` to understand what cross-codebase patterns are already known. This prevents re-discovering what's already documented and helps spot when a new finding matches an existing pattern.
+
+### 3. After the session — update INSIGHTS.md if warranted
+
+If the session surfaced a pattern that appears in 2+ projects, or a finding too important to stay in one project's docs alone, add it to `INSIGHTS.md`.
+
+Use this format:
+
+```markdown
+## <Pattern Name>
+**Seen in**: project-a, project-b
+**First noted**: YYYY-MM-DD by <source>
+**Last updated**: YYYY-MM-DD
+
+What the pattern is and why it matters.
+
+> **Implication**: what this means for the team.
+```
+
+### 4. Leave a message if needed
+
+If you have a question for a specific contributor, or a finding that should be in their individual DocIt, append to `MESSAGES.md`:
+
+```markdown
+## YYYY-MM-DD | core-agent → <recipient>
+
+**Project**: ...
+**Type**: question | finding | request | fyi
+**Message**: ...
+**Action needed**: ...
+
+<!-- status: pending -->
+```
+
+### Core DocIt: What Not To Do
+
+- Do not resolve messages from contributors on their behalf — route or acknowledge, then let them act
+- Do not overwrite `INSIGHTS.md` entries — append and update the `Last updated` date
+- Do not merge contributor docs automatically — use `merge.sh --contrib` and review the result
