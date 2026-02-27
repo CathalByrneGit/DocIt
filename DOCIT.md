@@ -136,7 +136,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 - [ ] First external codebase explored
 - [ ] Template validated against a real project
 - [ ] First contributor merged via `merge.sh --contrib`
-- [ ] Mermaid diagram support (future)
+- [x] Mermaid diagram support — guidelines in `CLAUDE.md`; live examples in `docs/docit/index.md`
 - [ ] LanceDB semantic indexing (future)
 
 ---
@@ -147,6 +147,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 |------|--------|------|-------|
 | 2026-02-26 | DocIt | Bootstrap | Initial structure created; DocIt explores itself |
 | 2026-02-27 | DocIt | Enhancement | Added sync scripts (backup, restore, merge, cron, setup); federation layer (MESSAGES, INSIGHTS, CONTRIBUTORS); core DocIt instructions in CLAUDE.md |
+| 2026-02-27 | DocIt | Enhancement | Added Mermaid guidelines to CLAUDE.md (when/which type/conventions/4 examples); live architecture diagrams in docs/docit/index.md |
 
 ---
 

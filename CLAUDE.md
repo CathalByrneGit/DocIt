@@ -151,6 +151,108 @@ DocIt is self-documenting. `docs/docit/` holds documentation of DocIt itself, ge
 
 ---
 
+## Mermaid Diagrams
+
+DocIt emits standard fenced Mermaid blocks. Rendering is handled entirely by the user's markdown viewer — GitHub, Obsidian, Typora, VS Code (Mermaid Preview extension), and most modern viewers render them natively. The agent never needs to think about rendering.
+
+### When to add a diagram
+
+Add one when:
+- A component has 3+ dependencies that are clearer as a graph than a list
+- A data or control flow spans multiple steps and isn't obvious from prose
+- A sequence involves 3+ actors interacting
+
+Skip it when:
+- A table or a sentence is already clear
+- The diagram would just redraw the directory tree (the ASCII tree is fine)
+- You're guessing at structure — use `> **Inferred**:` instead, diagram later
+
+### Which type to use
+
+| Diagram type | Mermaid keyword | Best for |
+|---|---|---|
+| Dependency / architecture | `graph LR` | Module relationships, which calls which |
+| Pipeline / data flow | `graph TD` | Data moving through stages, branching logic |
+| Request / response | `sequenceDiagram` | Multi-actor interactions, API flows |
+| State machine | `stateDiagram-v2` | Lifecycle states, transitions |
+| Data model | `erDiagram` | Schema, entity relationships |
+| Class hierarchy | `classDiagram` | Type inheritance, interfaces |
+
+Use `graph LR` (left-to-right) for dependency graphs — it reads like an import list.
+Use `graph TD` (top-to-bottom) for pipelines — it reads like a flowchart.
+
+### Conventions
+
+- Node IDs: `UPPER_CASE` for modules/services, `CamelCase` for classes, `lower` for files
+- Keep each diagram to one concern — don't try to show the whole system in one graph
+- Place diagrams in the **Architecture** or **How It Works** section of a doc
+- Follow a diagram with 1–2 sentences naming the key insight it shows
+- Label edges when the relationship type matters (`-->|reads from|`)
+
+### Examples
+
+**Module dependency graph** — which modules depend on which:
+
+````markdown
+```mermaid
+graph LR
+  API[api/] -->|authenticates via| Auth[auth/]
+  API -->|queries| DB[(database)]
+  Auth -->|reads| DB
+  Worker[worker/] -->|dequeues from| Queue[[queue]]
+  Worker -->|writes| DB
+```
+````
+
+**Data pipeline** — stages and branching:
+
+````markdown
+```mermaid
+graph TD
+  Input[/raw file/] --> Parse[Parser]
+  Parse --> Validate{Valid?}
+  Validate -->|yes| Transform[Transformer]
+  Validate -->|no| Error([error log])
+  Transform --> Output[/processed output/]
+```
+````
+
+**Request / response sequence** — login flow across services:
+
+````markdown
+```mermaid
+sequenceDiagram
+  participant Client
+  participant API
+  participant Auth
+  participant DB
+  Client->>API: POST /login
+  API->>Auth: verify(credentials)
+  Auth->>DB: SELECT user WHERE email=?
+  DB-->>Auth: user row
+  Auth-->>API: signed token
+  API-->>Client: 200 OK + token
+```
+````
+
+**State machine** — job lifecycle:
+
+````markdown
+```mermaid
+stateDiagram-v2
+  [*] --> Pending
+  Pending --> Running : worker picks up
+  Running --> Done : success
+  Running --> Failed : unhandled error
+  Failed --> Pending : retry (≤3)
+  Failed --> Dead : retries exhausted
+  Done --> [*]
+  Dead --> [*]
+```
+````
+
+---
+
 ## What Not To Do
 
 - Do not rewrite docs from scratch when updating — preserve existing knowledge
