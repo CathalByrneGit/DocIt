@@ -123,7 +123,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 - [x] `CLAUDE.md` — agent instructions written (incl. core DocIt session rules)
 - [x] `DOCIT.md` — this living document created
 - [x] `README.md` — human quick-start written
-- [x] `docit.sh` — session helper (explore, status, sync, backup)
+- [x] `docit.sh` — session helper (ingest, query, lint, update, status, sync, backup)
 - [x] `docs/docit/` — DocIt's self-documentation
 - [x] `backup.sh` — private knowledge backup to git repo
 - [x] `restore.sh` — restore from backup
@@ -133,10 +133,18 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 - [x] `MESSAGES.md` — shared inbox for agents and contributors (seeded)
 - [x] `INSIGHTS.md` — cross-codebase knowledge ledger (seeded)
 - [x] `CONTRIBUTORS.md` — team contributor registry (seeded)
+- [x] Mermaid diagram support — guidelines in `CLAUDE.md`; live examples in `docs/docit/index.md`
+- [x] `llm.sh` — LLM backend abstraction (claude / ollama / llama-server)
+- [x] `docit.sh lint` — doc health checks (broken links, stale tags, orphaned files, open TODOs)
+- [x] `docit.sh query` — LLM-powered question answering from docs; `--save` to file answers
+- [x] `docit.sh update` — targeted re-ingest prompt for changed files
+- [x] Crystallisation protocol in `CLAUDE.md` — end-of-session knowledge consolidation
+- [x] Supersession convention — `<!-- superseded: -->` markers for outdated claims
+- [x] Consolidation tiers — explicit four-layer knowledge model in `CLAUDE.md`
 - [ ] First external codebase explored
 - [ ] Template validated against a real project
 - [ ] First contributor merged via `merge.sh --contrib`
-- [x] Mermaid diagram support — guidelines in `CLAUDE.md`; live examples in `docs/docit/index.md`
+- [ ] `.docit.conf` example file
 - [ ] LanceDB semantic indexing (future)
 
 ---
@@ -148,6 +156,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 | 2026-02-26 | DocIt | Bootstrap | Initial structure created; DocIt explores itself |
 | 2026-02-27 | DocIt | Enhancement | Added sync scripts (backup, restore, merge, cron, setup); federation layer (MESSAGES, INSIGHTS, CONTRIBUTORS); core DocIt instructions in CLAUDE.md |
 | 2026-02-27 | DocIt | Enhancement | Added Mermaid guidelines to CLAUDE.md (when/which type/conventions/4 examples); live architecture diagrams in docs/docit/index.md |
+| 2026-04-08 | DocIt | Enhancement | Karpathy triangle complete: ingest+query+lint; llm.sh backend abstraction; crystallisation + supersession + consolidation tiers in CLAUDE.md |
 
 ---
 

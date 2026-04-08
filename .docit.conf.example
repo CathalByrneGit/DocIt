@@ -1,0 +1,28 @@
+# .docit.conf — Local configuration for DocIt
+#
+# Copy this file to .docit.conf and edit as needed.
+# .docit.conf is gitignored — do not commit it.
+#
+# docit.sh and llm.sh source this file at startup.
+
+# ─── LLM Backend ──────────────────────────────────────────────────────────────
+
+# Which LLM to use for query and merge conflict resolution.
+# Options: claude (default) | ollama | llama-server
+DOCIT_LLM=claude
+
+# Model name — used by ollama and llama-server backends.
+# Recommended: qwen2.5:14b or llama3.1:8b for local use.
+# DOCIT_LLM_MODEL=llama3.1:8b
+
+# Base URL for llama-server (default: http://localhost:8080).
+# DOCIT_LLM_URL=http://localhost:8080
+
+# Sampling temperature (default: 0.2 — low for factual doc work).
+# DOCIT_LLM_TEMPERATURE=0.2
+
+# ─── Backup ───────────────────────────────────────────────────────────────────
+
+# Path to your private backup git repo (used by backup.sh and docit.sh backup).
+# The repo must exist and have a remote configured.
+# DOCIT_BACKUP_DIR=~/docit-private

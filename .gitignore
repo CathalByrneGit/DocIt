@@ -1,0 +1,8 @@
+# Local config — contains personal paths and API preferences
+.docit.conf
+
+# Cron log — noisy, not useful in version control
+.cron.log
+
+# Temp files from merge.sh conflict resolution
+*.resolved

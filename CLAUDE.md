@@ -14,18 +14,45 @@ When a user opens this repo in a conversation, always:
 
 1. Read `DOCIT.md` to understand current state
 2. Read any relevant existing docs before exploring new code
-3. After meaningful work, update `DOCIT.md` with what changed
+3. After meaningful work, run the **Crystallisation** step and update `DOCIT.md`
+
+### Consolidation Tiers
+
+DocIt knowledge lives at four levels of permanence:
+
+| Tier | Where | Stability | Updated when |
+|------|-------|-----------|--------------|
+| **Working** | Session notes, scratch | Ephemeral | During the session |
+| **Episodic** | `DOCIT.md` exploration log | Append-only | Every session |
+| **Semantic** | `docs/<project>/*.md` | Durable, evolving | Each ingest/update |
+| **Procedural** | `CLAUDE.md` | Stable | Only when the system itself improves |
+
+Facts flow upward: a session observation → episodic log → component doc → and if it appears in 2+ projects, into `INSIGHTS.md`. Understanding this ladder helps you decide where to write something.
 
 ---
 
-## Starting a New Exploration
+## The Three Operations
 
-When a user asks you to explore a codebase (e.g. *"explore ~/projects/myapp"* or *"document this repo"*):
+DocIt has three first-class operations. Every session is one of these:
+
+| Operation | Command | What you do |
+|-----------|---------|-------------|
+| **Ingest** | `./docit.sh ingest <path>` | Explore a codebase for the first time or re-explore after major changes |
+| **Update** | `./docit.sh update <project> [files]` | Re-examine specific changed files and patch affected docs |
+| **Query** | `./docit.sh query "<question>"` | Answer a question by reading existing docs (handled by `llm.sh`, not this session) |
+
+All three end with **Crystallisation** (see below).
+
+---
+
+## Ingest: New Codebase
+
+When a user asks you to ingest or explore a codebase (e.g. *"ingest ~/projects/myapp"*):
 
 1. **Scan the top level** — understand the rough shape (language, size, type of project)
 2. **Create `docs/<project-name>/index.md`** using the Index Template below
 3. **Create component docs** for each major directory or module
-4. **Update `DOCIT.md`** — add a row to the Exploration Log
+4. **Run Crystallisation** (see below) to close the session
 
 ### Index Template
 
@@ -120,15 +147,47 @@ Anything surprising, legacy, or worth remembering.
 
 ---
 
-## Updating Existing Docs
+## Update: After Code Changes
 
-When a user asks about something already partly documented:
+When the user provides a list of changed files (via `./docit.sh update`):
 
-1. Read the existing doc first
-2. Explore the relevant code
-3. Fill gaps, correct inaccuracies, add detail
-4. Update the `<!-- explored: -->` date
-5. Log the update in `DOCIT.md`
+1. Read the existing component docs for the affected area
+2. Re-examine only the changed files — do not re-explore the whole project
+3. Patch affected docs: augment with new facts, correct what has changed
+4. **Supersede** outdated claims (see Supersession Convention below)
+5. Update `<!-- explored: -->` dates on modified docs
+6. Run Crystallisation to close the session
+
+---
+
+## End of Session: Crystallisation
+
+Every ingest and update session ends with a crystallisation step. This is how working-session knowledge flows up to durable tiers.
+
+After completing your exploration or update work:
+
+### 1. Extract cross-project findings
+If you discovered something that applies to more than one project — an architectural pattern, a common bug class, a shared dependency oddity — add it to `INSIGHTS.md`:
+
+```markdown
+## <Pattern Name>
+**Seen in**: project-a, project-b
+**First noted**: YYYY-MM-DD
+**Last updated**: YYYY-MM-DD
+
+What the pattern is and why it matters.
+
+> **Implication**: what this means for the team.
+```
+
+### 2. Resolve or retire open TODOs
+If you addressed a `<!-- TODO: ... -->` marker during this session, remove it or replace it with a finding. Do not leave resolved TODOs in place.
+
+### 3. Update DOCIT.md
+Add a row to the Exploration Log. Update Current Status and Next Steps if they've changed.
+
+### 4. Leave messages (core DocIt only)
+If you have findings relevant to a specific contributor, or questions that need a human answer, append to `MESSAGES.md`.
 
 ---
 
@@ -142,6 +201,21 @@ When a user asks about something already partly documented:
 | Uncertainty | Prefix with `> **Inferred**: ...` |
 | Gaps | Mark with `<!-- TODO: ... -->` |
 | Exploration tag | `<!-- explored: YYYY-MM-DD -->` in each doc |
+| Supersession | `<!-- superseded: YYYY-MM-DD, replaced by: <brief note> -->` |
+
+### Supersession Convention
+
+When an update makes an existing claim wrong or out of date, do not silently overwrite it. Instead:
+
+1. Add the supersession marker inline, directly above or beside the old claim:
+   ```
+   <!-- superseded: 2026-04-01, replaced by: tokens now expire in 1h, see auth.md -->
+   The auth tokens expire after 24 hours.
+   ```
+2. Write the new correct information below it (or update the section)
+3. On the next major clean-up pass, superseded blocks can be removed entirely
+
+This preserves the history of what the system understood and when it changed — valuable when debugging why a decision was made.
 
 ---
 
