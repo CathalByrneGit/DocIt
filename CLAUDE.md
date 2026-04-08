@@ -262,6 +262,7 @@ Every component doc should declare its entity type and dependencies using HTML c
 | `interface` | A public API surface, protocol, or contract |
 | `utility` | Shared helpers, libraries, or tooling |
 | `pattern` | An architectural pattern instantiated in this project |
+| `source` | A non-code requirements source: PDF methodology guide, regulatory spec, data dictionary, reporting standard |
 
 **Relationship tags:**
 
@@ -271,6 +272,7 @@ Every component doc should declare its entity type and dependencies using HTML c
 | `implements` | A pattern from `patterns/` that this component follows |
 | `exposes` | What this component offers to others |
 | `consumed-by` | What uses this component (optional, fill in when known) |
+| `satisfies` | A section in a `source` doc that this component implements (e.g. `satisfies: eurostat-slaughter#section-4.2`) |
 
 **Example:**
 
@@ -283,6 +285,68 @@ Every component doc should declare its entity type and dependencies using HTML c
 ```
 
 These tags are extracted by `./docit.sh graph <project>` to generate a Mermaid dependency graph.
+
+### Source Documents
+
+A **source doc** (`<!-- entity: source -->`) represents a non-code input that the codebase is meant to implement: a PDF methodology guide, a regulatory reporting standard, a data dictionary. It is a first-class component doc — it lives in `docs/<project>/` alongside the code component docs.
+
+**When a user provides a PDF or document alongside an instruction to relate it to the codebase:**
+
+1. Read the document in full
+2. Identify its logical sections (methodology steps, requirements, reporting rules)
+3. Create `docs/<project>/<document-name>.md` using the Source Template below
+4. Read the existing code component docs for that project
+5. For each source section, identify the code component(s) that implement it and add an `**Implemented by**` link
+6. For each code component that maps to a source section, add `<!-- satisfies: <doc-name>#<anchor> -->` to that component doc and a prose-level link in its **Dependencies** section
+7. Note any source sections with no implementing code — these are **gaps** and should be listed in the source doc's Open Questions
+
+### Source Template
+
+```markdown
+# <Document Title>
+
+**Source**: <Author/Organisation, year, full title>
+**URL or file**: <link or filename>
+**Purpose**: One sentence — what this document specifies and why the codebase must follow it.
+
+<!-- explored: YYYY-MM-DD -->
+<!-- entity: source -->
+
+## Overview
+
+Brief description of the document's scope and what it requires of implementors.
+
+## Sections
+
+### <Section number and title>
+
+> "<Verbatim or close-paraphrase excerpt of the key requirement>"
+
+**Implemented by**: [ComponentName](./component.md)
+
+---
+
+### <Next section>
+
+> "<Excerpt>"
+
+**Implemented by**: *(not yet implemented — gap)*
+
+## Coverage Summary
+
+| Section | Requirement | Implemented by | Status |
+|---------|-------------|----------------|--------|
+| §3.1 | Data collection scope | [data-ingestion](./data-ingestion.md) | covered |
+| §4.2 | Weight conversion | [conversion](./conversion.md) | covered |
+| §5.1 | Validation rules | — | **gap** |
+
+## Open Questions
+
+- Sections with no implementing code (gaps flagged above)
+- Ambiguous requirements that need clarification
+```
+
+**Bidirectionality:** every `<!-- satisfies: doc-name#section -->` tag on a code component must have a matching `**Implemented by**` link in the source doc, and vice versa. A source section with no `Implemented by` is a documented gap, not an omission.
 
 ---
 
