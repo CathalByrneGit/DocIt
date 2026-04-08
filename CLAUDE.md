@@ -22,12 +22,12 @@ DocIt knowledge lives at four levels of permanence:
 
 | Tier | Where | Stability | Updated when |
 |------|-------|-----------|--------------|
-| **Working** | Session notes, scratch | Ephemeral | During the session |
+| **Working** | `sessions/<date>-<project>.md` | Ephemeral | During the session |
 | **Episodic** | `DOCIT.md` exploration log | Append-only | Every session |
-| **Semantic** | `docs/<project>/*.md` | Durable, evolving | Each ingest/update |
+| **Semantic** | `docs/<project>/*.md`, `patterns/` | Durable, evolving | Each ingest/update |
 | **Procedural** | `CLAUDE.md` | Stable | Only when the system itself improves |
 
-Facts flow upward: a session observation → episodic log → component doc → and if it appears in 2+ projects, into `INSIGHTS.md`. Understanding this ladder helps you decide where to write something.
+Facts flow upward: a session observation → `sessions/` → component doc → if in 2+ projects, `patterns/` or `INSIGHTS.md`. Understanding this ladder helps you decide where to write something.
 
 ---
 
@@ -112,6 +112,8 @@ Each `docs/<project>/<component>.md` should cover:
 **Purpose**: One sentence.
 
 <!-- explored: YYYY-MM-DD -->
+<!-- entity: module | service | model | interface | utility | pattern -->
+<!-- depends-on: component-a, component-b -->
 
 ## What It Does
 
@@ -166,7 +168,19 @@ Every ingest and update session ends with a crystallisation step. This is how wo
 
 After completing your exploration or update work:
 
-### 1. Extract cross-project findings
+### 1. Write a session file
+Create `sessions/YYYY-MM-DD-<project>[-<focus>].md` with raw observations from this session. Use the format described in `sessions/README.md`. This is the working tier — write freely, don't polish.
+
+### 2. Promote findings from the session file
+Go through the session file's "Findings to Promote" list:
+- Component-level findings → update `docs/<project>/<component>.md`
+- Patterns seen in this project matching one in another project → update or create `patterns/<name>.md`
+- Cross-project findings (2+ projects) → add to `INSIGHTS.md`
+- Questions for contributors → append to `MESSAGES.md`
+
+Mark the session file as crystallised: `<!-- crystallised: YYYY-MM-DD -->`
+
+### 3. Extract cross-project findings
 If you discovered something that applies to more than one project — an architectural pattern, a common bug class, a shared dependency oddity — add it to `INSIGHTS.md`:
 
 ```markdown
@@ -180,13 +194,15 @@ What the pattern is and why it matters.
 > **Implication**: what this means for the team.
 ```
 
-### 2. Resolve or retire open TODOs
+If the pattern is detailed enough to deserve its own doc, create `patterns/<name>.md` and link to it from `INSIGHTS.md`.
+
+### 4. Resolve or retire open TODOs
 If you addressed a `<!-- TODO: ... -->` marker during this session, remove it or replace it with a finding. Do not leave resolved TODOs in place.
 
-### 3. Update DOCIT.md
+### 5. Update DOCIT.md
 Add a row to the Exploration Log. Update Current Status and Next Steps if they've changed.
 
-### 4. Leave messages (core DocIt only)
+### 6. Leave messages (core DocIt only)
 If you have findings relevant to a specific contributor, or questions that need a human answer, append to `MESSAGES.md`.
 
 ---
@@ -202,6 +218,8 @@ If you have findings relevant to a specific contributor, or questions that need 
 | Gaps | Mark with `<!-- TODO: ... -->` |
 | Exploration tag | `<!-- explored: YYYY-MM-DD -->` in each doc |
 | Supersession | `<!-- superseded: YYYY-MM-DD, replaced by: <brief note> -->` |
+| Entity type | `<!-- entity: module \| service \| model \| interface \| utility \| pattern -->` |
+| Dependencies | `<!-- depends-on: component-a, component-b -->` |
 
 ### Supersession Convention
 
@@ -216,6 +234,59 @@ When an update makes an existing claim wrong or out of date, do not silently ove
 3. On the next major clean-up pass, superseded blocks can be removed entirely
 
 This preserves the history of what the system understood and when it changed — valuable when debugging why a decision was made.
+
+### Entity Tagging Convention
+
+Every component doc should declare its entity type and dependencies using HTML comment tags immediately after the Purpose line and `<!-- explored: -->` tag. These are machine-readable and invisible in rendered markdown.
+
+**Entity types:**
+
+| Type | Use for |
+|------|---------|
+| `module` | A code module or directory with a clear boundary |
+| `service` | A running process or microservice |
+| `model` | A data model, schema, or entity type |
+| `interface` | A public API surface, protocol, or contract |
+| `utility` | Shared helpers, libraries, or tooling |
+| `pattern` | An architectural pattern instantiated in this project |
+
+**Relationship tags:**
+
+| Tag | Use for |
+|-----|---------|
+| `depends-on` | Modules/services this component calls or imports |
+| `implements` | A pattern from `patterns/` that this component follows |
+| `exposes` | What this component offers to others |
+| `consumed-by` | What uses this component (optional, fill in when known) |
+
+**Example:**
+
+```markdown
+<!-- explored: 2026-04-08 -->
+<!-- entity: service -->
+<!-- depends-on: database, auth, queue -->
+<!-- implements: event-sourcing -->
+<!-- exposes: REST-API -->
+```
+
+These tags are extracted by `./docit.sh graph <project>` to generate a Mermaid dependency graph.
+
+---
+
+## Patterns
+
+The `patterns/` directory holds detailed documentation of recurring architectural patterns observed across 2+ projects. It sits between per-project docs (specific) and `INSIGHTS.md` (summary).
+
+**When to create a pattern doc:**
+- You've seen the same approach in 2+ codebases
+- The pattern is detailed enough to need more than an INSIGHTS.md entry
+- Future ingest sessions should link here rather than re-document
+
+**When to just add to INSIGHTS.md:**
+- You've only seen it once — note it, don't document it fully yet
+- It's a high-level observation, not an implementable pattern
+
+The `patterns/index.md` holds the template and a table of all known patterns.
 
 ---
 

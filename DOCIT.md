@@ -123,28 +123,25 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 - [x] `CLAUDE.md` — agent instructions written (incl. core DocIt session rules)
 - [x] `DOCIT.md` — this living document created
 - [x] `README.md` — human quick-start written
-- [x] `docit.sh` — session helper (ingest, query, lint, update, status, sync, backup)
+- [x] `docit.sh` — init, ingest, query, lint (+ --deep), graph, update, install-hook, status, sync, backup
 - [x] `docs/docit/` — DocIt's self-documentation
-- [x] `backup.sh` — private knowledge backup to git repo
-- [x] `restore.sh` — restore from backup
-- [x] `merge.sh` — remote sync + `claude -p` conflict resolution + `--contrib` federation
-- [x] `cron.sh` — scheduled sync with lock file and logging
-- [x] `setup.sh` — cron/systemd installer
-- [x] `MESSAGES.md` — shared inbox for agents and contributors (seeded)
-- [x] `INSIGHTS.md` — cross-codebase knowledge ledger (seeded)
-- [x] `CONTRIBUTORS.md` — team contributor registry (seeded)
-- [x] Mermaid diagram support — guidelines in `CLAUDE.md`; live examples in `docs/docit/index.md`
+- [x] `backup.sh` / `restore.sh` / `merge.sh` / `cron.sh` / `setup.sh` — sync scripts
+- [x] `MESSAGES.md` / `INSIGHTS.md` / `CONTRIBUTORS.md` — federation layer (seeded)
 - [x] `llm.sh` — LLM backend abstraction (claude / ollama / llama-server)
-- [x] `docit.sh lint` — doc health checks (broken links, stale tags, orphaned files, open TODOs)
-- [x] `docit.sh query` — LLM-powered question answering from docs; `--save` to file answers
-- [x] `docit.sh update` — targeted re-ingest prompt for changed files
-- [x] Crystallisation protocol in `CLAUDE.md` — end-of-session knowledge consolidation
-- [x] Supersession convention — `<!-- superseded: -->` markers for outdated claims
-- [x] Consolidation tiers — explicit four-layer knowledge model in `CLAUDE.md`
+- [x] `sessions/` — working memory tier; session files feed crystallisation
+- [x] `patterns/` — cross-project pattern library (middle tier)
+- [x] Entity tagging — `<!-- entity: -->` + `<!-- depends-on: -->` in component docs
+- [x] `docit.sh graph` — Mermaid dependency graph from entity tags
+- [x] `docit.sh install-hook` — post-commit hook logging changes to `sessions/`
+- [x] `docit.sh init` — guided first-time setup wizard
+- [x] `docit.sh lint --deep` — LLM-powered contradiction/inconsistency detection
+- [x] Crystallisation protocol — sessions/ as source, patterns/ as destination, INSIGHTS.md for cross-project
+- [x] Supersession convention — `<!-- superseded: -->` inline markers
+- [x] Consolidation tiers — working → episodic → semantic → procedural
+- [x] `.docit.conf.example` + `.gitignore`
 - [ ] First external codebase explored
 - [ ] Template validated against a real project
 - [ ] First contributor merged via `merge.sh --contrib`
-- [ ] `.docit.conf` example file
 - [ ] LanceDB semantic indexing (future)
 
 ---
@@ -157,6 +154,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 | 2026-02-27 | DocIt | Enhancement | Added sync scripts (backup, restore, merge, cron, setup); federation layer (MESSAGES, INSIGHTS, CONTRIBUTORS); core DocIt instructions in CLAUDE.md |
 | 2026-02-27 | DocIt | Enhancement | Added Mermaid guidelines to CLAUDE.md (when/which type/conventions/4 examples); live architecture diagrams in docs/docit/index.md |
 | 2026-04-08 | DocIt | Enhancement | Karpathy triangle complete: ingest+query+lint; llm.sh backend abstraction; crystallisation + supersession + consolidation tiers in CLAUDE.md |
+| 2026-04-08 | DocIt | Enhancement | Karpathy/Rohit synthesis: sessions/ (working tier), patterns/ (middle tier), entity tagging, graph command, install-hook, lint --deep, init wizard |
 
 ---
 
