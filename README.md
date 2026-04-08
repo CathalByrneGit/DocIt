@@ -6,9 +6,9 @@
 
 ## What Is This?
 
-DocIt is a documentation system built on a simple idea: a well-crafted markdown file + a capable AI agent = living codebase documentation that actually stays useful.
+DocIt is a documentation system built on a simple idea: a well-crafted markdown file + a capable AI agent = living codebase documentation that stays useful over time.
 
-You point DocIt at a codebase. The agent explores it and writes structured markdown. Next time you ask about that codebase, the agent reads the existing docs first, then digs deeper. Over time, your docs accumulate real understanding — architecture, key concepts, gotchas, open questions.
+You point DocIt at a codebase. The agent explores it, writes structured markdown, and tags components with typed entity relationships. Next time you ask about that codebase, the agent reads existing docs first. Over time, your docs accumulate real understanding — architecture, data flows, patterns, gotchas, open questions.
 
 No databases. No build steps. No special software. Just markdown files and conversation.
 
@@ -16,11 +16,28 @@ No databases. No build steps. No special software. Just markdown files and conve
 
 ## Quick Start
 
-1. Clone this repo
-2. Open a Claude conversation and reference `CLAUDE.md`
-3. Say: *"Explore the codebase at /path/to/myproject"*
-4. The agent generates `docs/<project-name>/index.md` and component docs
-5. Next session: ask follow-up questions, the agent builds on what's already there
+```bash
+# 1. Clone and configure
+git clone <this-repo> ~/DocIt
+cd ~/DocIt
+./docit.sh init          # guided setup: LLM backend, backup, auto-sync
+
+# 2. Explore a codebase
+./docit.sh ingest ~/projects/myapp
+
+# 3. Paste the printed prompt into a Claude conversation
+#    Agent reads CLAUDE.md, explores the codebase, writes docs/myapp/
+
+# 4. Query your docs without opening a conversation
+./docit.sh query "how does authentication work?" --project myapp
+
+# 5. Check doc health
+./docit.sh lint myapp
+./docit.sh lint myapp --deep    # LLM-powered contradiction detection
+
+# 6. See the dependency graph
+./docit.sh graph myapp
+```
 
 ---
 
@@ -28,65 +45,95 @@ No databases. No build steps. No special software. Just markdown files and conve
 
 | Path | Purpose |
 |------|---------|
-| `CLAUDE.md` | Agent instructions — defines how DocIt sessions work |
-| `DOCIT.md` | Living document — spec, current state, exploration log |
+| `CLAUDE.md` | Agent instructions — the system's brain |
+| `DOCIT.md` | Living document — spec, state, exploration log |
 | `README.md` | This file |
-| `docit.sh` | Helper script for starting sessions |
+| `docit.sh` | Main CLI: init, ingest, query, lint, graph, update, install-hook, sync, backup |
+| `llm.sh` | LLM backend abstraction — claude / ollama / llama-server |
+| `backup.sh` | Sync docs to a private git repo |
+| `restore.sh` | Restore docs from backup |
+| `merge.sh` | Sync with remote or merge a contributor's DocIt; uses `claude -p` for conflicts |
+| `cron.sh` | Scheduled sync wrapper with lock file |
+| `setup.sh` | Install cron/systemd automation |
+| `.docit.conf.example` | Config template — copy to `.docit.conf` |
 | `docs/` | All generated codebase explorations |
-| `docs/docit/` | DocIt's self-documentation (dogfood example) |
+| `docs/docit/` | DocIt's self-documentation |
+| `sessions/` | Working memory — raw session notes before crystallisation |
+| `patterns/` | Cross-project architectural pattern library |
+| `MESSAGES.md` | Shared inbox for agents and contributors (core DocIt) |
+| `INSIGHTS.md` | Cross-codebase knowledge ledger (core DocIt) |
+| `CONTRIBUTORS.md` | Team contributor registry (core DocIt) |
 
 ---
 
-## The Two Key Files
+## How It Works
 
-**`CLAUDE.md`** is the system's brain. It tells the agent:
-- What to explore and how to structure the output
-- What templates to use for index and component docs
-- How to augment existing docs without overwriting them
-- Conventions for marking gaps and uncertainty
+DocIt has three operations, all of which end with a **Crystallisation** step that flows knowledge upward:
 
-**`DOCIT.md`** is the system's state. It holds:
-- The vision and philosophy
-- Current status (what's done, what's next)
-- An exploration log (every codebase explored, when)
-- Open questions about the system itself
+```
+Ingest  → explore a codebase → docs/<project>/
+Update  → re-examine changed files → patch affected docs
+Query   → answer a question → synthesised from existing docs
+```
 
-The agent reads both at the start of every session.
+Knowledge flows through four tiers:
+
+```
+sessions/          ← working memory (raw notes during a session)
+     ↓
+DOCIT.md log       ← episodic (what happened, when)
+     ↓
+docs/<project>/    ← semantic (durable component docs)
+patterns/          ← semantic (cross-project patterns)
+     ↓
+CLAUDE.md          ← procedural (the rules themselves)
+```
 
 ---
 
-## Example Session
+## LLM Backends
+
+DocIt works with Claude (default), Ollama, or llama-server. Configure in `.docit.conf`:
+
+```bash
+DOCIT_LLM=ollama
+DOCIT_LLM_MODEL=qwen2.5:14b
+```
+
+See `.docit.conf.example` for all options. The `query`, `lint --deep`, and `merge.sh` conflict resolution all route through `llm.sh` — switching backends requires no script changes.
+
+---
+
+## Team Use
+
+Each team member runs their own DocIt. A shared **core DocIt** aggregates knowledge:
 
 ```
-You: Explore this repo: ~/projects/my-api
-
-Agent: reads CLAUDE.md, reads DOCIT.md
-Agent: scans ~/projects/my-api
-Agent: creates docs/my-api/index.md     ← overview, structure, entry points
-Agent: creates docs/my-api/routes.md    ← the routes module
-Agent: creates docs/my-api/models.md    ← the data models
-Agent: updates DOCIT.md                 ← logs the exploration
-
-You: How does authentication work in my-api?
-
-Agent: reads docs/my-api/index.md first
-Agent: reads docs/my-api/routes.md
-Agent: digs into the auth code specifically
-Agent: updates docs/my-api/auth.md with new detail
+alice/DocIt  ──merge.sh --contrib──▶  core/DocIt
+bob/DocIt    ──merge.sh --contrib──▶      │
+                                     MESSAGES.md   ← shared inbox
+                                     INSIGHTS.md   ← cross-project patterns
+                                     CONTRIBUTORS.md
 ```
+
+The core agent reads `MESSAGES.md` at session start and acts on pending items.
+
+---
+
+## Staying Current
+
+Install a post-commit hook in any repo you're documenting:
+
+```bash
+./docit.sh install-hook ~/projects/myapp
+```
+
+Every commit to that repo logs changed files to `sessions/`. Run `./docit.sh update myapp <files>` to generate the re-ingest prompt.
 
 ---
 
 ## Philosophy
 
-This is "pseudo software" — the markdown is the program, the agent is the runtime. Fork the repo and you get the whole system. No installation required.
+The `CLAUDE.md` file is the program. The `DOCIT.md` file is the state. The agent is the CPU. This is "pseudo software" — no compilation, no deployment, no versioning hell. Fork the repo and you get the whole system.
 
-Inspired by [PaulKinlan/journal](https://github.com/PaulKinlan/journal) and the emerging practice of using plain text + AI agents as a complete, durable software stack.
-
----
-
-## Roadmap
-
-- [x] Core markdown + agent system
-- [ ] Mermaid diagram generation for architecture visualization
-- [ ] LanceDB integration for semantic search across all explorations
+Inspired by [PaulKinlan/journal](https://github.com/PaulKinlan/journal), [Karpathy's LLM wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), and the idea that plain text + a capable agent = powerful software.
