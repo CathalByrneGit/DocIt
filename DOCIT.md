@@ -3,7 +3,7 @@
 > A codebase explorer powered by markdown and an AI agent.
 > No databases. No special software. Just structured thinking, evolving in writing.
 
-<!-- last-updated: 2026-02-27 -->
+<!-- last-updated: 2026-04-08 -->
 
 ---
 
@@ -51,39 +51,50 @@ Each run **augments** rather than replaces. The docs accumulate understanding.
 
 ```
 DocIt/
-├── CLAUDE.md           ← Agent instructions (the "brain" — stable)
-├── DOCIT.md            ← This file: living spec + state + log (evolving)
-├── README.md           ← Human quick-start
-├── docit.sh            ← Session helper (explore, status, sync, backup)
+├── CLAUDE.md               ← Agent instructions (procedural tier — stable)
+├── DOCIT.md                ← This file: living spec + state + log (episodic tier)
+├── README.md               ← Human quick-start
+├── docit.sh                ← Main CLI: init, ingest, query, lint, graph,
+│                              update, install-hook, status, sync, backup
+├── llm.sh                  ← LLM backend abstraction (claude/ollama/llama-server)
+├── .docit.conf.example     ← Config template (copy to .docit.conf, gitignored)
 │
-├── backup.sh           ← Sync docs/ to a private git repo
-├── restore.sh          ← Restore docs/ from backup
-├── merge.sh            ← Sync with remote or merge a contributor's DocIt
-├── cron.sh             ← Scheduled sync wrapper (lock file + logging)
-├── setup.sh            ← Install cron/systemd automation
+├── backup.sh               ← Sync docs/ to a private git repo
+├── restore.sh              ← Restore docs/ from backup
+├── merge.sh                ← Remote sync or --contrib federation merge
+├── cron.sh                 ← Scheduled sync wrapper (lock file + logging)
+├── setup.sh                ← Install cron/systemd automation
 │
-├── MESSAGES.md         ← Shared inbox: agents and contributors leave notes
-├── INSIGHTS.md         ← Cross-codebase knowledge ledger (core DocIt only)
-├── CONTRIBUTORS.md     ← Team members feeding into this core DocIt
+├── MESSAGES.md             ← Shared inbox: agents and contributors leave notes
+├── INSIGHTS.md             ← Cross-codebase knowledge ledger (core DocIt only)
+├── CONTRIBUTORS.md         ← Team members feeding into this core DocIt
 │
-└── docs/               ← All generated explorations
-    ├── docit/          ← DocIt exploring itself (dogfood)
+├── sessions/               ← Working memory tier (ephemeral session notes)
+│   └── README.md
+│
+├── patterns/               ← Cross-project pattern library (middle tier)
+│   └── index.md
+│
+└── docs/                   ← Semantic tier: all generated explorations
+    ├── docit/              ← DocIt exploring itself (dogfood)
     │   ├── index.md
     │   ├── agent-instructions.md
     │   ├── living-document.md
-    │   └── session-helper.md
-    └── <project>/      ← One directory per explored codebase
+    │   ├── session-helper.md
+    │   └── sync-scripts.md
+    └── <project>/          ← One directory per explored codebase
         ├── index.md
         └── <component>.md
 ```
 
-### The Three Layers
+### Four Consolidation Tiers
 
-| Layer | File(s) | Role | Changes |
-|-------|---------|------|---------|
-| **Instructions** | `CLAUDE.md` | How the agent behaves | Rarely — only as the system improves |
-| **State** | `DOCIT.md` | What's been done, what's next | Every session |
-| **Knowledge** | `docs/**` | Deep per-codebase documentation | Every exploration |
+| Tier | Where | Stability | Updated when |
+|------|-------|-----------|--------------|
+| **Working** | `sessions/` | Ephemeral | During the session |
+| **Episodic** | `DOCIT.md` exploration log | Append-only | Every session |
+| **Semantic** | `docs/`, `patterns/` | Durable, evolving | Each ingest/update |
+| **Procedural** | `CLAUDE.md` | Stable | Only when the system itself improves |
 
 ### Individual vs Core DocIt
 
@@ -155,6 +166,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 | 2026-02-27 | DocIt | Enhancement | Added Mermaid guidelines to CLAUDE.md (when/which type/conventions/4 examples); live architecture diagrams in docs/docit/index.md |
 | 2026-04-08 | DocIt | Enhancement | Karpathy triangle complete: ingest+query+lint; llm.sh backend abstraction; crystallisation + supersession + consolidation tiers in CLAUDE.md |
 | 2026-04-08 | DocIt | Enhancement | Karpathy/Rohit synthesis: sessions/ (working tier), patterns/ (middle tier), entity tagging, graph command, install-hook, lint --deep, init wizard |
+| 2026-04-08 | DocIt | Doc update | Updated existing docs to match new functionality: README rewritten; index.md, agent-instructions.md, living-document.md, session-helper.md updated; sync-scripts.md created; DOCIT.md tiers/architecture corrected |
 
 ---
 
@@ -171,19 +183,14 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 
 ## Next Steps
 
-1. Run DocIt on a real codebase to validate the templates
-2. Iterate on `CLAUDE.md` based on what the agent needs but doesn't have
-3. Try a real contributor merge with `merge.sh --contrib` to stress-test the knowledge synthesis
-4. Consider `patterns/` folder once 3+ codebases are explored (cross-project knowledge layer)
+1. Run DocIt on a real codebase to validate the ingest templates end-to-end
+2. Run the first crystallisation cycle: explore → write session file → promote to docs
+3. Try `merge.sh --contrib` with a real second DocIt to stress-test federation
+4. Add a pattern doc to `patterns/` once the same approach is seen in 2+ projects
+5. Iterate on `CLAUDE.md` based on what the agent needs but doesn't have in practice
 
 ---
 
-## Future: LanceDB + Mermaid
+## Future
 
-When the markdown corpus grows large enough, two additions become worthwhile:
-
-**Mermaid diagrams** — generate architecture diagrams directly in markdown. The agent already understands structure; emitting `graph TD` blocks is a small step. Useful for: data flows, module dependencies, class hierarchies.
-
-**LanceDB indexing** — embed each doc chunk and store in a local LanceDB. Enables semantic search across all explorations: *"where does authentication happen across all my projects?"*. The markdown remains the source of truth; LanceDB is a query accelerator.
-
-Neither is needed for v1. The markdown is already useful.
+**LanceDB indexing** — embed each doc chunk and store in a local LanceDB. Enables semantic search across all explorations: *"where does authentication happen across all my projects?"*. The markdown remains the source of truth; LanceDB is a query accelerator. Worth adding once the corpus exceeds ~50 docs.

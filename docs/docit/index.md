@@ -46,7 +46,8 @@ DocIt/
         ├── index.md
         ├── agent-instructions.md
         ├── living-document.md
-        └── session-helper.md
+        ├── session-helper.md
+        └── sync-scripts.md
 ```
 
 ## Architecture
@@ -117,6 +118,7 @@ graph TD
 | [Agent Instructions](./agent-instructions.md) | `CLAUDE.md` | Rules, templates, entity tagging, crystallisation protocol |
 | [Living Document](./living-document.md) | `DOCIT.md` | System state, vision, exploration log |
 | [Session Helper](./session-helper.md) | `docit.sh` + `llm.sh` | CLI and LLM backend abstraction |
+| [Sync Scripts](./sync-scripts.md) | `backup.sh`, `restore.sh`, `merge.sh`, `cron.sh`, `setup.sh` | Persistence, multi-device sync, team federation |
 
 ## Dependencies
 
