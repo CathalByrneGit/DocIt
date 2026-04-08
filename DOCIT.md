@@ -167,6 +167,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 | 2026-04-08 | DocIt | Enhancement | Karpathy triangle complete: ingest+query+lint; llm.sh backend abstraction; crystallisation + supersession + consolidation tiers in CLAUDE.md |
 | 2026-04-08 | DocIt | Enhancement | Karpathy/Rohit synthesis: sessions/ (working tier), patterns/ (middle tier), entity tagging, graph command, install-hook, lint --deep, init wizard |
 | 2026-04-08 | DocIt | Doc update | Updated existing docs to match new functionality: README rewritten; index.md, agent-instructions.md, living-document.md, session-helper.md updated; sync-scripts.md created; DOCIT.md tiers/architecture corrected |
+| 2026-04-08 | mempalace (external) | Exploration | Explored milla-jovovich/mempalace for applicable ideas; extracted 4 learnings: load tiering, bidirectional pattern links, store-verbatim principle, halls/fact-types concept; applied first three to CLAUDE.md and INSIGHTS.md |
 
 ---
 

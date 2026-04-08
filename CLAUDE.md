@@ -13,8 +13,21 @@ You maintain and grow a set of structured markdown documents. Every session shou
 When a user opens this repo in a conversation, always:
 
 1. Read `DOCIT.md` to understand current state
-2. Read any relevant existing docs before exploring new code
+2. Read existing docs in order of relevance — **do not load everything at once**
 3. After meaningful work, run the **Crystallisation** step and update `DOCIT.md`
+
+### Session Reading Order
+
+Load docs in tiers, not all at once. Large projects can overflow context if you read everything upfront.
+
+| Tier | What to load | When |
+|------|--------------|------|
+| **Always** | `DOCIT.md` + `docs/<project>/index.md` | Start of every session |
+| **On task** | Component docs relevant to the current task | When you know what area is changing |
+| **On demand** | Other component docs, `patterns/`, `INSIGHTS.md` | Only if the task touches them |
+| **Full scan** | All docs for the project | Only for lint, graph, or comprehensive ingest |
+
+Start with the index. Let the task tell you which component docs to read next. Do not pre-emptively load component docs for areas you won't touch.
 
 ### Consolidation Tiers
 
@@ -287,6 +300,22 @@ The `patterns/` directory holds detailed documentation of recurring architectura
 - It's a high-level observation, not an implementable pattern
 
 The `patterns/index.md` holds the template and a table of all known patterns.
+
+### Bidirectional Pattern Links
+
+Pattern links must go both ways. When a component doc uses `<!-- implements: event-sourcing -->`, also add a prose-level link in that doc's **Dependencies** section:
+
+```markdown
+## Dependencies
+
+- Implements: [Event Sourcing](../../patterns/event-sourcing.md)
+```
+
+And update the pattern doc's `Seen in` field to include this project. This ensures that:
+- Reading a component doc → you discover the pattern
+- Reading the pattern doc → you discover all projects that implement it
+
+A pattern with no back-links in component docs is a dead end.
 
 ---
 
