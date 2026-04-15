@@ -37,3 +37,16 @@ DocIt follows the same principle: the supersession convention never deletes old 
 The implication is: when a knowledge system faces a choice between "compress smartly now" vs "store fully and structure the index", choose the latter. Intelligence should be in the retrieval layer, not the storage layer.
 
 > **Implication**: do not summarise component docs to save space. Preserve full detail and use the entity graph, patterns/, and INSIGHTS.md to create navigable structure on top. The cost of storage is low; the cost of lost context is high.
+
+## Consensus Docs Are Dangerous
+**Seen in**: docit (principle), jonadas.com essay
+**First noted**: 2026-04-15 by docit-agent
+**Last updated**: 2026-04-15
+
+LLMs have a gravitational pull toward consensus — toward the average of everything they have read. When an agent summarises a codebase component, the natural output is accurate, well-formatted, and smoothed over. Genuine tensions — contradictory assumptions between components, ambiguous requirement implementations, surprising design choices — get resolved into readable prose that hides the decision point entirely.
+
+Techio demonstrated this with 300 files of reading notes fed to an LLM compiler: output was perfectly formatted and completely useless, reading like Wikipedia entries rather than working knowledge.
+
+The fix is explicit governance rules that force friction preservation. In DocIt: the `> **Tension**:` convention documents genuine conflicts rather than resolving them; the Antagonistic Lint checklist actively hunts for places where consensus is disguising conflict; source doc immutability ensures the original requirements can't be quietly rewritten to match what the code actually does.
+
+> **Implication**: when reviewing agent-generated docs, the most dangerous output is not the obviously wrong claim — it is the smoothly written paragraph that has erased a real trade-off. Hunt for `> **Tension**:` markers that are absent where they should be present.

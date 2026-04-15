@@ -108,6 +108,8 @@ graph TD
 - **Crystallisation**: end-of-session step that flows working notes up to durable docs
 - **Entity tagging**: `<!-- entity: -->` and `<!-- depends-on: -->` tags make docs machine-readable; `docit.sh graph` extracts them as a Mermaid dependency graph
 - **Three operations**: ingest (explore), query (ask), lint (health-check) — every session is one of these
+- **Friction preservation**: `> **Tension**:` marks genuine conflicts and unresolved trade-offs; `> **Inferred**:` marks uncertainty. Neither is smoothed over — consensus docs hide the decisions that matter
+- **Source traceability**: PDFs and methodology specs ingested as `<!-- entity: source -->` docs; code components link back with `<!-- satisfies: source#section -->`; coverage gaps are explicitly tracked
 - **Acknowledged gaps**: `<!-- TODO: -->` markers are first-class — better to mark uncertainty than fake completeness
 - **Pseudo software**: the markdown files are the program; the AI agent is the CPU
 
