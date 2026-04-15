@@ -228,6 +228,7 @@ If you have findings relevant to a specific contributor, or questions that need 
 | Dates | ISO 8601: `YYYY-MM-DD` |
 | Links | Relative markdown links between docs |
 | Uncertainty | Prefix with `> **Inferred**: ...` |
+| Friction | Prefix with `> **Tension**: ...` |
 | Gaps | Mark with `<!-- TODO: ... -->` |
 | Exploration tag | `<!-- explored: YYYY-MM-DD -->` in each doc |
 | Supersession | `<!-- superseded: YYYY-MM-DD, replaced by: <brief note> -->` |
@@ -247,6 +248,32 @@ When an update makes an existing claim wrong or out of date, do not silently ove
 3. On the next major clean-up pass, superseded blocks can be removed entirely
 
 This preserves the history of what the system understood and when it changed — valuable when debugging why a decision was made.
+
+### Friction Preservation
+
+DocIt docs have a natural tendency toward consensus — the agent summarises what it finds and produces readable, accurate, smoothed-over output. This is often wrong. A well-documented codebase should preserve genuine friction, not resolve it into a tidy paragraph.
+
+Use `> **Tension**:` when you find:
+- A design decision where multiple approaches were considered and the trade-offs are unresolved
+- Two components that make conflicting assumptions about the same data or behaviour
+- A requirement in a source doc that the code implements ambiguously or incompletely
+- Something the code does that surprised you and you cannot fully explain
+- A place where the "obvious" approach was clearly rejected, but the reason isn't documented
+
+**Do not smooth these over.** A tension documented is a decision point visible to the next person. A tension smoothed over is a hidden time bomb.
+
+```markdown
+> **Tension**: the validation module rejects values outside the Eurostat range,
+> but the ingestion pipeline silently clips them instead. Both behaviours appear
+> intentional. See §4.1 of the methodology source doc — it is ambiguous on this point.
+
+> **Tension**: two weight conversion coefficients exist — one in the Annex II
+> table (source doc) and one hardcoded in conversion.py. They differ for cattle.
+> Unclear which is authoritative; the discrepancy has not been raised with Eurostat.
+```
+
+`> **Inferred**:` is for uncertainty about facts you couldn't verify.
+`> **Tension**:` is for genuine conflicts or unresolved trade-offs you *did* verify — they're real, not gaps in your knowledge.
 
 ### Entity Tagging Convention
 
@@ -347,6 +374,8 @@ Brief description of the document's scope and what it requires of implementors.
 ```
 
 **Bidirectionality:** every `<!-- satisfies: doc-name#section -->` tag on a code component must have a matching `**Implemented by**` link in the source doc, and vice versa. A source section with no `Implemented by` is a documented gap, not an omission.
+
+**Source docs are immutable.** Once created, the `>` quoted excerpts in a source doc must never be modified — they represent the original document and are the ground truth the codebase must answer to. The agent may add `Implemented by` links, update the Coverage Summary, and add Open Questions — but the quoted content is locked. If the source document itself changes (a new edition of the methodology), create a new source doc with a versioned filename and supersede the old one.
 
 ---
 
@@ -497,6 +526,19 @@ stateDiagram-v2
 - Do not mark a section complete if you haven't actually read the code
 - Do not make up specifics — use `> **Inferred**:` for guesses
 - Do not create docs for things that don't exist yet
+- **Do not produce consensus docs.** If a component makes a surprising choice, has competing implementations, or implements a requirement ambiguously — document the friction with `> **Tension**:`, do not smooth it into a clean summary. The LLM's natural pull is toward readable, average output. Resist it.
+
+### Antagonistic Lint
+
+When asked to lint a project (especially `lint --deep`), do not just confirm that everything looks coherent. Actively look for:
+
+- **Contradictions between docs** — does component A's description of how data flows contradict component B's?
+- **Consensus disguising conflict** — find places where the docs read smoothly but the code actually makes a surprising or contested choice
+- **Unimplemented source requirements** — scan source docs for sections with no `Implemented by` link
+- **Missing tensions** — find complex or non-obvious code that has no `> **Tension**:` or `> **Inferred**:` marker; these are candidates for friction that has been smoothed over
+- **Stale claims** — facts asserted without a date, or with an `<!-- explored: -->` date older than 90 days on an actively changing project
+
+Report findings as specific, located problems — not general observations. "Component X and component Y both describe the aggregation step differently" is useful. "Some docs may be inconsistent" is not.
 
 ---
 
