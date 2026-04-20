@@ -249,6 +249,22 @@ When an update makes an existing claim wrong or out of date, do not silently ove
 
 This preserves the history of what the system understood and when it changed — valuable when debugging why a decision was made.
 
+### Writing Style
+
+DocIt docs are a literary artefact as much as a technical one. LLMs tend to produce technically correct docs without taste — accurate, well-formatted, and inert. Apply these six qualities to counter that pull:
+
+**Lightness** — explain the heaviest concepts without burdening the reader. Prefer concrete words over latinate abstractions. Write "reads the config file" not "performs configuration file ingestion operations." A doc that grins is light while being accurate.
+
+**Quickness** — state the point in the first sentence. No preamble, no build-up. If the Purpose line in a component doc takes more than one sentence, you don't understand the component well enough yet. Every sentence earns its place or it goes.
+
+**Exactitude** — structure before words. Know what a page is *for* before writing a word of it. The most precise sentence cannot rescue a section filed under the wrong heading. Every level — from the index down to a bullet point — refuses to be approximate.
+
+**Visibility** — write so the reader can close their eyes and see what the page describes. Before reaching for a Mermaid diagram, try producing the same picture with prose: *"The pipeline reads CSV from S3, strips null rows, converts weights using Annex II coefficients, then writes to the output table."* Diagrams should add to prose, not compensate for its failure.
+
+**Multiplicity** — serve multiple reader types in the same doc. The newcomer scans **What It Does**. The developer reads **How It Works**. The reviewer checks **Notes & Gotchas**. Do not collapse these concerns into an undifferentiated wall of text.
+
+**Consistency** — every doc should feel like it came from the same mind. Same voice, same tense, same term for the same thing throughout. Do not alternate between "ingestion" and "import", "component" and "module." The reader should not notice the seams.
+
 ### Friction Preservation
 
 DocIt docs have a natural tendency toward consensus — the agent summarises what it finds and produces readable, accurate, smoothed-over output. This is often wrong. A well-documented codebase should preserve genuine friction, not resolve it into a tidy paragraph.

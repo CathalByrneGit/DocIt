@@ -169,6 +169,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 | 2026-04-08 | DocIt | Doc update | Updated existing docs to match new functionality: README rewritten; index.md, agent-instructions.md, living-document.md, session-helper.md updated; sync-scripts.md created; DOCIT.md tiers/architecture corrected |
 | 2026-04-08 | mempalace (external) | Exploration | Explored milla-jovovich/mempalace for applicable ideas; extracted 4 learnings: load tiering, bidirectional pattern links, store-verbatim principle, halls/fact-types concept; applied first three to CLAUDE.md and INSIGHTS.md |
 | 2026-04-15 | jonadas.com (external) | Exploration | Explored "Beyond Karpathy's LLM-Wiki: The Necessity of Cognitive Governance" (Techio); applied 3 learnings to CLAUDE.md: source doc immutability, `> **Tension**:` friction-preservation convention, antagonistic lint checklist; docs updated accordingly |
+| 2026-04-20 | passo.uno (external) | Exploration | Explored "What makes docs beautiful" (Ferri-Benedetti); applied Calvino's six literary qualities as a Writing Style section in CLAUDE.md: lightness, quickness, exactitude, visibility, multiplicity, consistency |
 
 ---
 

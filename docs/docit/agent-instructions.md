@@ -21,7 +21,8 @@
 | Component Template | Markdown template for module docs; includes entity tags | Stable |
 | Update: After Code Changes | How to re-examine changed files and patch docs | Stable |
 | End of Session: Crystallisation | 6-step end-of-session protocol | Stable |
-| Conventions | File naming, dates, links, inferred, **tension**, gaps, supersession, entity tags | Stable |
+| Conventions | File naming, dates, links, inferred, tension, gaps, supersession, entity tags | Stable |
+| Writing Style | Six qualities (lightness, quickness, exactitude, visibility, multiplicity, consistency) | Stable |
 | Friction Preservation | When to use `> **Tension**:`; why consensus docs are dangerous | Stable |
 | Supersession Convention | How to mark outdated claims without deleting them | Stable |
 | Entity Tagging | Entity types (incl. `source`), relationship tags (incl. `satisfies`), example | Stable |
