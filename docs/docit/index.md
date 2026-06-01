@@ -35,8 +35,11 @@ DocIt/
 ├── INSIGHTS.md             ← Cross-codebase patterns ledger (core DocIt)
 ├── CONTRIBUTORS.md         ← Team contributor registry (core DocIt)
 │
-├── sessions/               ← Working memory tier
+├── sessions/               ← Working memory tier (agent-written)
 │   └── README.md           ← Session file format and lifecycle
+│
+├── notes/                  ← Human notes (free-form, no conventions)
+│   └── README.md           ← What belongs here and how the agent uses it
 │
 ├── patterns/               ← Cross-project pattern library
 │   └── index.md            ← Pattern template and index
@@ -63,7 +66,9 @@ graph LR
   Agent -->|reads state from| DOCIT[DOCIT.md]
   Agent -->|reads/writes| Docs[docs/project/]
   Agent -->|writes raw notes to| Sessions[sessions/]
+  Human([Human]) -->|writes free-form to| Notes[notes/]
   Sessions -->|crystallised into| Docs
+  Notes -->|promoted during crystallisation| Docs
   Docs -->|patterns extracted to| Patterns[patterns/]
   Patterns -->|summarised in| INSIGHTS[INSIGHTS.md]
   Docs -->|consulted by| User
@@ -109,6 +114,7 @@ graph TD
 - **Entity tagging**: `<!-- entity: -->` and `<!-- depends-on: -->` tags make docs machine-readable; `docit.sh graph` extracts them as a Mermaid dependency graph
 - **Three operations**: ingest (explore), query (ask), lint (health-check) — every session is one of these
 - **Friction preservation**: `> **Tension**:` marks genuine conflicts and unresolved trade-offs; `> **Inferred**:` marks uncertainty. Neither is smoothed over — consensus docs hide the decisions that matter
+- **Human notes**: `notes/<project>/` is free-form human capture — no conventions. The agent reads and promotes these during crystallisation into `## Human Context` sections in component docs. `> **Context**:` marks human-added domain knowledge inline.
 - **Source traceability**: PDFs and methodology specs ingested as `<!-- entity: source -->` docs; code components link back with `<!-- satisfies: source#section -->`; coverage gaps are explicitly tracked
 - **Acknowledged gaps**: `<!-- TODO: -->` markers are first-class — better to mark uncertainty than fake completeness
 - **Pseudo software**: the markdown files are the program; the AI agent is the CPU

@@ -22,12 +22,12 @@ Load docs in tiers, not all at once. Large projects can overflow context if you 
 
 | Tier | What to load | When |
 |------|--------------|------|
-| **Always** | `DOCIT.md` + `docs/<project>/index.md` | Start of every session |
+| **Always** | `DOCIT.md` + `docs/<project>/index.md` + any `notes/<project>/` files | Start of every session |
 | **On task** | Component docs relevant to the current task | When you know what area is changing |
 | **On demand** | Other component docs, `patterns/`, `INSIGHTS.md` | Only if the task touches them |
 | **Full scan** | All docs for the project | Only for lint, graph, or comprehensive ingest |
 
-Start with the index. Let the task tell you which component docs to read next. Do not pre-emptively load component docs for areas you won't touch.
+Start with the index. Check `notes/<project>/` before reading component docs — human notes often contain the "why" that code reading cannot reveal. Do not pre-emptively load component docs for areas you won't touch.
 
 ### Consolidation Tiers
 
@@ -155,6 +155,13 @@ What does this component expose? What does it consume?
 
 Anything surprising, legacy, or worth remembering.
 
+## Human Context
+
+<!-- AGENT: do not edit this section — it belongs to the human -->
+
+Domain knowledge, rationale, history, and contacts that code reading cannot reveal.
+Add with > **Context**: prefix or free prose. The agent reads this but never overwrites it.
+
 ## Open Questions
 
 <!-- TODO: explore X further -->
@@ -184,12 +191,18 @@ After completing your exploration or update work:
 ### 1. Write a session file
 Create `sessions/YYYY-MM-DD-<project>[-<focus>].md` with raw observations from this session. Use the format described in `sessions/README.md`. This is the working tier — write freely, don't polish.
 
-### 2. Promote findings from the session file
+### 2. Promote findings from the session file and human notes
 Go through the session file's "Findings to Promote" list:
 - Component-level findings → update `docs/<project>/<component>.md`
 - Patterns seen in this project matching one in another project → update or create `patterns/<name>.md`
 - Cross-project findings (2+ projects) → add to `INSIGHTS.md`
 - Questions for contributors → append to `MESSAGES.md`
+
+Also scan `notes/<project>/` for any unincorporated human notes (no `<!-- incorporated: -->` marker). For each:
+- If it belongs in a component doc's `## Human Context` section → add it there
+- If it's a tension or gap → add with the appropriate marker
+- If it's a cross-project insight → add to `INSIGHTS.md`
+- Mark the note as incorporated: `<!-- incorporated: YYYY-MM-DD, promoted to: component.md -->`
 
 Mark the session file as crystallised: `<!-- crystallised: YYYY-MM-DD -->`
 
@@ -229,6 +242,7 @@ If you have findings relevant to a specific contributor, or questions that need 
 | Links | Relative markdown links between docs |
 | Uncertainty | Prefix with `> **Inferred**: ...` |
 | Friction | Prefix with `> **Tension**: ...` |
+| Human context | Prefix with `> **Context**: ...` (added by humans, never overwritten by agent) |
 | Gaps | Mark with `<!-- TODO: ... -->` |
 | Exploration tag | `<!-- explored: YYYY-MM-DD -->` in each doc |
 | Supersession | `<!-- superseded: YYYY-MM-DD, replaced by: <brief note> -->` |
@@ -392,6 +406,41 @@ Brief description of the document's scope and what it requires of implementors.
 **Bidirectionality:** every `<!-- satisfies: doc-name#section -->` tag on a code component must have a matching `**Implemented by**` link in the source doc, and vice versa. A source section with no `Implemented by` is a documented gap, not an omission.
 
 **Source docs are immutable.** Once created, the `>` quoted excerpts in a source doc must never be modified — they represent the original document and are the ground truth the codebase must answer to. The agent may add `Implemented by` links, update the Coverage Summary, and add Open Questions — but the quoted content is locked. If the source document itself changes (a new edition of the methodology), create a new source doc with a versioned filename and supersede the old one.
+
+---
+
+## Human Notes
+
+The `notes/` directory is the human's free-form capture space. No conventions, no templates — write whatever, whenever. It is the one place the agent never writes to and never reformats.
+
+### Structure
+
+```
+notes/
+└── <project>/
+    └── YYYY-MM-DD-<topic>.md   ← any content, any style
+```
+
+Files can also go directly in `notes/` without a project subfolder if they span multiple projects.
+
+### What belongs here
+
+- Domain knowledge the code doesn't explain — *"this coefficient was set in 2023 when Eurostat revised Annex II"*
+- Rationale for past decisions — *"we tried X first, it failed because of Y"*
+- Contacts and process knowledge — *"check with the data team before changing the aggregation window"*
+- Meeting notes, call summaries, things overheard that affect the codebase
+- Quick observations that don't yet deserve a full session
+
+### The `## Human Context` section
+
+Every component doc has a `## Human Context` section at the bottom. The agent never writes to or overwrites this section. Humans can add to it directly without going through an agent session. Use `> **Context**:` for short inline annotations or free prose for longer explanations.
+
+### Agent behaviour
+
+- **Read** `notes/<project>/` at the start of every session for the current project
+- **Promote** unincorporated notes during crystallisation — move the substance into `## Human Context` or the appropriate component section
+- **Never reformat or delete** notes files — mark them `<!-- incorporated: -->` after promoting, leave the file in place
+- **Never write** new files to `notes/` — that space belongs to the human
 
 ---
 
