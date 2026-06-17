@@ -2,7 +2,7 @@
 
 > A codebase explorer powered by markdown and an AI agent. No special software required.
 
-<!-- explored: 2026-04-08 -->
+<!-- explored: 2026-06-17 -->
 <!-- entity: utility -->
 
 ## Overview
@@ -117,6 +117,7 @@ graph TD
 - **Human notes**: `notes/<project>/` is free-form human capture — no conventions. The agent reads and promotes these during crystallisation into `## Human Context` sections in component docs. `> **Context**:` marks human-added domain knowledge inline.
 - **Source traceability**: PDFs and methodology specs ingested as `<!-- entity: source -->` docs; code components link back with `<!-- satisfies: source#section -->`; coverage gaps are explicitly tracked
 - **Acknowledged gaps**: `<!-- TODO: -->` markers are first-class — better to mark uncertainty than fake completeness
+- **Format portability**: DocIt docs are plain markdown with standard links and lightweight metadata tags — any agent that can read markdown can consume them. The value is in the content model, not the runtime. This is independently validated by Google's Open Knowledge Format (OKF), MemPalace, and Karpathy's original LLM-wiki pattern.
 - **Pseudo software**: the markdown files are the program; the AI agent is the CPU
 
 ## Components

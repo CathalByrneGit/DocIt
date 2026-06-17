@@ -50,3 +50,18 @@ Techio demonstrated this with 300 files of reading notes fed to an LLM compiler:
 The fix is explicit governance rules that force friction preservation. In DocIt: the `> **Tension**:` convention documents genuine conflicts rather than resolving them; the Antagonistic Lint checklist actively hunts for places where consensus is disguising conflict; source doc immutability ensures the original requirements can't be quietly rewritten to match what the code actually does.
 
 > **Implication**: when reviewing agent-generated docs, the most dangerous output is not the obviously wrong claim — it is the smoothly written paragraph that has erased a real trade-off. Hunt for `> **Tension**:` markers that are absent where they should be present.
+
+## Markdown as Universal Knowledge Format
+**Seen in**: docit, mempalace, google-okf, karpathy-llm-wiki
+**First noted**: 2026-06-17 by docit-agent
+**Last updated**: 2026-06-17
+
+Four independent projects converge on the same architecture: a directory of markdown files, maintained by an AI agent, with no database and no proprietary platform. Karpathy proposed LLM-wiki as a pattern. MemPalace implemented it for personal memory. Google formalized it as OKF v0.1 (Open Knowledge Format, published 2026-06-12). DocIt applies it to codebase documentation.
+
+The shared design surface: one concept per file, directory structure as taxonomy, cross-linking via standard markdown links, an index file for progressive disclosure, and agent-as-runtime for reads and writes. The format is both human-readable and machine-parseable without special tooling.
+
+Where they diverge is instructive: OKF uses YAML frontmatter for structured metadata; DocIt uses HTML comments (invisible in rendered markdown). OKF separates producer and consumer cleanly; DocIt adds a bidirectional flow where humans also write (notes/) and the agent promotes. MemPalace prioritises verbatim storage and retrieval benchmarks; DocIt prioritises friction preservation and living updates.
+
+The convergence suggests this is not a trend but a stable equilibrium — markdown directories are the natural format for agent-maintained knowledge, the way JSON became the natural format for APIs.
+
+> **Implication**: invest in the format's self-describing qualities (templates, entity tags, consistent structure) rather than building proprietary tooling around it. Any agent that can read markdown and follow links can consume DocIt docs — the value is in the content model, not the runtime.

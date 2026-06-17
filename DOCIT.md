@@ -3,7 +3,7 @@
 > A codebase explorer powered by markdown and an AI agent.
 > No databases. No special software. Just structured thinking, evolving in writing.
 
-<!-- last-updated: 2026-04-08 -->
+<!-- last-updated: 2026-06-17 -->
 
 ---
 
@@ -174,6 +174,7 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 | 2026-04-15 | jonadas.com (external) | Exploration | Explored "Beyond Karpathy's LLM-Wiki: The Necessity of Cognitive Governance" (Techio); applied 3 learnings to CLAUDE.md: source doc immutability, `> **Tension**:` friction-preservation convention, antagonistic lint checklist; docs updated accordingly |
 | 2026-04-20 | passo.uno (external) | Exploration | Explored "What makes docs beautiful" (Ferri-Benedetti); applied Calvino's six literary qualities as a Writing Style section in CLAUDE.md: lightness, quickness, exactitude, visibility, multiplicity, consistency |
 | 2026-04-20 | DocIt | Enhancement | Added human notes integration: `notes/` free-form folder, `## Human Context` component section, `> **Context**:` inline marker, agent promotion rules in crystallisation |
+| 2026-06-17 | Google OKF (external) | Exploration | Explored Google's Open Knowledge Format v0.1; validated DocIt's convergence with 3 other markdown-as-database projects; noted YAML frontmatter as future consideration; added "Markdown as Universal Knowledge Format" to INSIGHTS.md |
 
 ---
 
@@ -185,6 +186,8 @@ DocIt grows in tandem with the user's understanding. Early explorations are shal
 - At what point does a flat `docs/<project>/` directory need subdirectories?
 - When a core DocIt merges from N contributors simultaneously, what's the right ordering? (Most recent first? By contributor seniority on the project?)
 - Should `MESSAGES.md` have an archiving convention once it grows large?
+- Should DocIt adopt YAML frontmatter (like OKF) for top-of-file metadata (`entity`, `explored`, `depends-on`) while keeping HTML comments for inline markers (`superseded`, `TODO`)? Trade-off: YAML is more standard and tooling-friendly; HTML comments are invisible in rendered markdown.
+- Should DocIt docs be OKF-compatible bundles, or is the overlap sufficient without formal conformance?
 
 ---
 
